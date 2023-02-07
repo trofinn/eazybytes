@@ -1,0 +1,35 @@
+version: '3.5'
+
+services:
+
+  java:
+    image: myspring
+    container_name: java
+    ports:
+      - 9000:8080
+    depends_on:
+      - db
+  db:
+    image: mysql:8.0.31
+    container_name: db
+    ports:
+      - 3306:3306
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./data:/var/lib/mysql
+      - ./src/main/resources/eazyschool_schema.sql:/docker-entrypoint-initdb.d/1.sql
+      - ./src/main/resources/eazyschool_data.sql:/docker-entrypoint-initdb.d/2.sql
+  
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    container_name: myadmin
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+    depends_on:
+      - db
+  
